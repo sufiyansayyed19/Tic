@@ -36,32 +36,47 @@ const winningPatterns = [
 // console.log(buttons); // getting nodeList of button
 
 
-
-
-function startGame(){
-    iconChoice.style.display = "none";
-    game.style.display = "flex";
-    computerTurn();
-}
-
-
-
 function withPlayer(){
+    computer = false;
+    console.log("Mode:", computer ? "Computer" : "Player");
     playWith.style.display = "none";
     game.style.display = "flex";
     playerTurn();
 }
 
 function withComputer(){
+    computer = true;
     playWith.style.display = "none";
     iconChoice.style.display = "flex";
+    console.log("withComputer fucntion-->Mode:", computer ? "Computer" : "Player");
 }
 
+function choiceX(){
+    chooseO = true;
+    chooseX = false;
+    startGame();
+    console.log("Choice:", chooseO ? "computer-O" : "Computer-X");
+}
 
+function choiceO(){
+    chooseX = true;
+    chooseO = false;
+    startGame();
+    console.log("Choice:", chooseO ? "computer-O" : "Computer-X");
+}
+
+function startGame(){
+    iconChoice.style.display = "none";
+    game.style.display = "flex";
+    setTimeout(() => {
+        computerTurn();
+    }, 600); 
+    // computerTurn();
+    console.log("Start-game fucntion-->Mode:", computer ? "Computer" : "Player");
+}
 
 function computerTurn(){
-    computer = true;
-    const randomButton = getRandomButton();
+   const randomButton = getRandomButton();
     printSymbol(randomButton);
     randomButton.disabled = true;
     checkDraw();
@@ -71,19 +86,12 @@ function computerTurn(){
     }
 }
 
-
-
-
-
-
-
-
 function getRandomButton(){
     let randomButton;
     do {
         const randomIndex = Math.floor(Math.random() * buttons.length );
         randomButton = buttons[randomIndex];
-        console.log(randomButton);
+        // console.log(randomButton);
     } while (randomButton.disabled);
     return randomButton;
 }
@@ -96,6 +104,11 @@ function printSymbol(randomButton){
     }
 }
 
+
+
+
+
+
 function checkDraw(){
     if (count == 9) {
         checkWinner();
@@ -103,23 +116,13 @@ function checkDraw(){
              game.style.display = "none";
              draw.style.display = "flex";
              showWinner.style.display ="none";  
-            console.log(draw);
+            // console.log(draw);
             matchDraw = true;
         }  
     }
     return;
 }
-function choiceX(){
-    chooseO = true;
-    chooseX = false;
-    startGame();
-}
 
-function choiceO(){
-    chooseX = true;
-    chooseO = false;
-    startGame();
-}
 function checkWinner(){
    if (!matchDraw) {
         for (let pattern of winningPatterns){
@@ -128,24 +131,23 @@ function checkWinner(){
             const x3 = buttons[pattern[2]].innerText;
             if (x1 != "" && x2 != "" && x3 != ""){
                 if (x1 === x2 && x2 === x3 ){
-                    console.log('we got winner');
+                    // console.log('we got winner');
                     game.style.display = 'none';
                     showWinner.style.display = 'flex';
                     const winnerHeading = document.getElementById("winner"); 
-                        if (!computer){
-                            winnerHeading.innerHTML = `Congratulation 🎉🥳🎊🎁 <br> Winner 🏆 is Player-${x1}`;    
-                        }else if(computer){
-                            if (chooseO && x1 == 'X'){
-                                winnerHeading.innerHTML = `Congratulation 🎉🥳🎊🎁 <br> You are the Winner 🏆`;}
-                            else if (chooseO && x1 == 'O'){
-                                winnerHeading.innerHTML = `Oops!... <br> Better Luck Next Time`;
-                            }else if (chooseX && x1 === 'O'){
-                                winnerHeading.innerHTML = `Congratulation 🎉🥳🎊🎁 <br> You are Winner 🏆`;
-                            }else if (chooseX && x1 === 'X'){
-                                winnerHeading.innerHTML = `Oops!... <br> Better Luck Next Time`;
-                            }
+                    if (!computer){
+                        winnerHeading.innerHTML = `Congratulation 🎉🥳🎊🎁 <br> Winner 🏆 is Player-${x1}`;    
+                    }else if(computer){
+                        if (chooseO && x1 == 'X'){
+                            winnerHeading.innerHTML = `Congratulation 🎉🥳🎊🎁 <br> You are the Winner 🏆`;}
+                        else if (chooseO && x1 == 'O'){
+                            winnerHeading.innerHTML = `Oops!... <br> Better Luck Next Time`;
+                        }else if (chooseX && x1 === 'O'){
+                            winnerHeading.innerHTML = `Congratulation 🎉🥳🎊🎁 <br> You are Winner 🏆`;
+                        }else if (chooseX && x1 === 'X'){
+                            winnerHeading.innerHTML = `Oops!... <br> Better Luck Next Time`;
                         }
-                        
+                    }
                     matchWon = true;
                 }
             }
@@ -175,6 +177,7 @@ function handlePlayerClick(event) {
     btn.disabled = true;
     checkWinner();
     checkDraw();
+    console.log("Player Turn-->Mode:", computer ? "Computer" : "Player");
     if (computer && !matchDraw && !matchWon) {
         setTimeout(() => {
             computerTurn();
@@ -215,6 +218,9 @@ function newGame(){
 }
 
 function homePage(){
+    computer = false;
+    chooseO = false;
+    chooseX = false;
     restart = true;
     resetGame();
     playWith.style.display = 'flex';
@@ -223,10 +229,14 @@ function homePage(){
     draw.style.display = "none";
     showWinner.style.display = "none";
     restart = false;
+    console.log("Resetting Game");
+    console.log("Restart function-->Mode:", computer ? "Computer" : "Player");
+    console.log("Choices - X:", chooseX, ", O:", chooseO);
 }
 
 
 function resetGame(){
+    
     buttons.forEach((btn) => { 
         btn.innerText = "";
         btn.disabled = false;
@@ -237,11 +247,16 @@ function resetGame(){
     count = 0;
     matchDraw = false;
     matchWon = false;
-    if (!restart){
-        if (computer){
+    if (!restart && computer) { 
+        // If restarting and playing against the computer, it should be the computer's turn
+        setTimeout(() => {  // Adding a delay to simulate the computer's "thinking"
             computerTurn();
-        }
+        }, 600);
     }
     
     
 }
+
+
+
+
