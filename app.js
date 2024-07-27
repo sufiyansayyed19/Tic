@@ -79,7 +79,7 @@ function startGame() {
   game.style.display = "flex";
   setTimeout(() => {
     computerTurn();
-  },300);
+  },50);
   console.log("Start-game function-->Mode:", computer ? "Computer" : "Player");
 }
 
